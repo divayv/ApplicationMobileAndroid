@@ -1,5 +1,10 @@
 package com.example.guillaume.loginportail;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -44,11 +49,13 @@ public class PostConnexion {
             }
             postDataBytes = postData.toString().getBytes("UTF-8");
 
+
             conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
             conn.setDoOutput(true);
+
 
         }catch(Exception e){
             e.printStackTrace();

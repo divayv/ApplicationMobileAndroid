@@ -1,7 +1,10 @@
 package com.example.guillaume.loginportail;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.os.AsyncTask;
-
+import android.util.Log;
 
 
 /**
@@ -25,6 +28,7 @@ public class SendCredentials extends AsyncTask<String, Void, String> {
     }
 
     protected String doInBackground( String ...params ) {
+
         PostConnexion postConnexion = new PostConnexion(this.params, keyParams, urlParam);
         return postConnexion.execRequest();
     }
