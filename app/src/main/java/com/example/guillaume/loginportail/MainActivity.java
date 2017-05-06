@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -136,6 +137,28 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.show();
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (Network net : cm.getAllNetworks()) {
+                if (cm.getNetworkInfo(net).getType() == ConnectivityManager.TYPE_WIFI) {
+                    Log.e("reseau debug", "Seting process network to " + net);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        cm.bindProcessToNetwork(net);
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        cm.setProcessDefaultNetwork(net);
+                    }
+                }
+            }
+        }else{
+            cm.setNetworkPreference(ConnectivityManager.TYPE_WIFI);
+        }
+
     }
 
     public void onLoginSuccess(){
@@ -290,9 +313,10 @@ public class MainActivity extends AppCompatActivity {
     public String decryptString(String alias, String cipherText) {
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
-            RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
+            PrivateKey privateKey = (PrivateKey) privateKeyEntry.getPrivateKey();
 
-            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
+            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+
             output.init(Cipher.DECRYPT_MODE, privateKey);
 
             CipherInputStream cipherInputStream = new CipherInputStream(
